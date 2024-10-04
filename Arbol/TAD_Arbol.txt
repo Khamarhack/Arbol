@@ -1,3 +1,9 @@
+/******************************************
+Fecha: 1 octubre 2024
+Autor: Santiago Camargo
+Tema: Taller Arboles
+Estructuras de datos
+******************************************/
 TAD Arbol:
 Datos Minimos:
    raiz,senala el nodo que corresponde a la raiz del arbol.

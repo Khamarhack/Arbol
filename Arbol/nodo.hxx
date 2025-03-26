@@ -10,153 +10,120 @@ Estructuras de datos
 using namespace std;
 
 template<class T>
-Nodo<T>::Nodo()
-{
-
+Nodo<T>::Nodo() {
+    // Constructor por defecto
 }
 
 template<class T>
-Nodo<T>::Nodo(T valor)
-{
+Nodo<T>::Nodo(T valor) {
+    // Constructor que inicializa el nodo con un valor
     this->dato = valor;
 }
 
 template<class T>
-T& Nodo<T>::obtenerDato()
-{
+T& Nodo<T>::obtenerDato() {
     return this->dato;
 }
 
 template<class T>
-void Nodo<T>::fijarDato(T& val)
-{
+void Nodo<T>::fijarDato(T& val) {
     this->dato = val;
-    return;
 }
 
 template<class T>
-int Nodo<T>::altura()
-{
-	if(hijos.size()==0)
-	{
-		return 0;
-	}
-	int maximo = 0, aux_altura;
-	for(int i = 0;i<hijos.size() ; i++){
-	    aux_altura = hijos[i].altura();
-        if(aux_altura> maximo)
-            maximo = aux_altura;
-	}
-	return maximo + 1;
-}
-
-
-template<class T>
-int Nodo<T>::tamano()
-{
-	if(this->hijoIzq==NULL && this->hijoDer == NULL)
-	{
-		return 1;
-	}
-	int conta = 0;
-	for( int i = 0; i<hijos.size() ; ++i){
-        conta+=hijos[i].tamano();
-	}
-	return conta+1;
-}
-
-
-template<class T>
-void Nodo<T>:: limpiarLista()
-{
-    if(hijos.size()==0){
-        delete(this);
-        return;
-
+int Nodo<T>::altura() {
+    // Calcula la altura del nodo dentro del árbol.
+    if (hijos.empty()) {
+        return 0; // Un nodo sin hijos tiene altura 0.
     }
 
-    for(int i=0; i<hijos.size(); i++){
-        hijos[i].limpiarLista();
+    int maximo = 0;
+    for (auto& hijo : hijos) {
+        maximo = max(maximo, hijo.altura());
     }
-
+    return maximo + 1; // Se suma 1 para contar el nodo actual.
 }
 
-
-
 template<class T>
-void Nodo<T>:: adicionarDesc(T &val)
-{
-    Nodo* hijo = new Nodo(val);
-    hijos.push_back(*hijo);
+int Nodo<T>::tamano() {
+    // Calcula el número total de nodos en el subárbol a partir de este nodo.
+    int conta = 1; // Cuenta el nodo actual
+    for (auto& hijo : hijos) {
+        conta += hijo.tamano(); // Suma el tamaño de cada hijo
+    }
+    return conta;
 }
 
+template<class T>
+void Nodo<T>::limpiarLista() {
+    // Elimina todos los nodos en la lista de hijos de forma recursiva.
+    for (auto& hijo : hijos) {
+        hijo.limpiarLista();
+    }
+    hijos.clear(); // Borra todos los hijos de la lista
+}
 
 template<class T>
-bool Nodo<T>:: eliminarDesc(T &val){
-    bool correr=false;
-    for(int i=0;i<hijos.size();i++){
-        if(correr){
-            hijos[i-1]=hijos[i];
+void Nodo<T>::adicionarDesc(T &val) {
+    // Agrega un nuevo nodo hijo con el valor proporcionado.
+    hijos.emplace_back(val); // Se agrega el nuevo hijo directamente al vector
+}
+
+template<class T>
+bool Nodo<T>::eliminarDesc(T &val) {
+    // Busca y elimina un nodo hijo con el valor especificado.
+    for (auto it = hijos.begin(); it != hijos.end(); ++it) {
+        if (it->dato == val) {
+            hijos.erase(it); // Elimina el nodo encontrado
+            return true;
         }
-        if(hijos[i] == val)
-            correr=true;
     }
-
-    if(!correr)
-        return false;
-    hijos.pop_back();
-    return true;
+    return false; // Si no se encontró el nodo, retorna falso.
 }
 
-
 template<class T>
-Nodo<T>* Nodo<T>:: buscar(T val){
-    if(this->dato == val)
+Nodo<T>* Nodo<T>::buscar(T val) {
+    // Busca un nodo con el valor especificado en el subárbol.
+    if (this->dato == val) {
         return this;
-    if(this->hijos.size() == 0)
-        return NULL;
-    Nodo* aux;
-    for(int i = 0; i<hijos.size() ; i++){
-        aux = hijos[i].buscar(val);
-        if(aux!=NULL)
-            return aux;
     }
 
-    return NULL;
-
+    for (auto& hijo : hijos) {
+        Nodo<T>* resultado = hijo.buscar(val);
+        if (resultado != nullptr) {
+            return resultado;
+        }
+    }
+    return nullptr;
 }
 
 template<class T>
-void Nodo<T>:: preOrden()
-{
-	cout << "\t"<<this->obtenerDato() << endl;
-	for(int i = 0; i < hijos.size() ; i++){
-        hijos[i].preOrden();
-	}
-	return;
+void Nodo<T>::preOrden() {
+    // Recorre el árbol en preorden (nodo actual -> hijos).
+    cout << "\t" << this->obtenerDato() << endl;
+    for (auto& hijo : hijos) {
+        hijo.preOrden();
+    }
 }
 
 template<class T>
-void Nodo<T>:: posOrden()
-{
-	for(int i = 0; i < hijos.size() ; i++){
-        hijos[i].preOrden();
-	}
-	return;
-
-	cout << "\t"<<this->obtenerDato() << endl;
-	return;
-
+void Nodo<T>::posOrden() {
+    // Recorre el árbol en posorden (hijos -> nodo actual).
+    for (auto& hijo : hijos) {
+        hijo.posOrden();
+    }
+    cout << "\t" << this->obtenerDato() << endl; // Ahora sí se imprime correctamente después de recorrer los hijos
 }
 
 template<class T>
-void Nodo<T>:: nivelOrden(std::queue<Nodo*> &cola){
-	cola.push(this);
-	for(int i=0 ; i<this->hijos->size() ; i++){
-        cola.push(this->hijos[i]);
-	}
+void Nodo<T>::nivelOrden(std::queue<Nodo<T>*>& cola) {
+    // Recorre el árbol en orden por niveles usando una cola.
+    cola.push(this);
+    for (auto& hijo : hijos) {
+        cola.push(&hijo); // Se encolan los hijos correctamente
+    }
 }
 
 
-
+	
 

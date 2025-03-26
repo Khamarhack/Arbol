@@ -1,3 +1,9 @@
+/*******************************************
+Fecha: 26 marzo 2025
+Autor: Santiago Camargo
+Tema: Taller Arboles
+Estructuras de datos
+******************************************/
 #ifndef __NODO__H__
 #define __NODO__H__
 
